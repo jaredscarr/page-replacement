@@ -3,6 +3,7 @@ from collections import deque
 
 class Fifo:
 	def __init__(self, frame_count: int=3):
+		"""Init the Fifo class."""
 		self.frame_count = frame_count
 		self.fault_count = 0
 		self._cache = deque()
@@ -19,4 +20,9 @@ class Fifo:
 		self._cache.append(ref)
 		self.fault_count += 1
 		return result
+	
+	def process_all(self, ref_list: tuple[str]) -> None:
+		"""Process a list of references."""
+		for ref in ref_list:
+			self.process_next(ref)
 		
