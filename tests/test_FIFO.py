@@ -13,7 +13,7 @@ class TestFifo:
 
     @pytest.fixture
     def fifo(self):
-        """Init a new Fifo object."""
+        """Return a new Fifo class."""
         # Note using default frame count of 3 for testing
         return Fifo()
 
@@ -52,4 +52,9 @@ class TestFifo:
         expected = 16
         for i in self.pages3:
             fifo.process_next(i)
+        assert fifo.fault_count == expected
+
+    def test_process_all(self, fifo):
+        expected = 16
+        fifo.process_all(self.pages3)
         assert fifo.fault_count == expected
