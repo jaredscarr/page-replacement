@@ -42,7 +42,7 @@ class Optimal:
 	
 	def _set_replace_next(self) -> None:
 		"""Replace the current next item to replace with a new one if the
-		current to replace value is seen earlier. Prereq: indices are in range."""
+		current to replace value is seen earlier. Pre-req: indices are in range."""
 		current = self._get_next_seen(0)
 		curr_index = 0
 

@@ -9,7 +9,8 @@ class Fifo:
 		self._cache = deque()
 
 	def process_next(self, ref: str) -> int:
-		"""If a new ref is passed then add it to the cache. If the frames are full remove the oldest and return it."""
+		"""If a new ref is passed then add it to the cache.
+		If the frames are full remove the oldest and return it."""
 		result = None
 		if ref in self._cache:
 			return result
