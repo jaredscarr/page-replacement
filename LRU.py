@@ -2,7 +2,7 @@ import sys
 
 
 class Lru:
-    def __init__(self, frame_count: int=3):
+    def __init__(self, frame_count: int = 3):
         """Init the Lru class."""
         self._internal_clock = 0
         self.frame_count = frame_count
@@ -11,7 +11,7 @@ class Lru:
         self._replace_next = None
         self._last_seen_dict = {}
 
-    def process_next(self, ref: str) -> int:
+    def process_next(self, ref: int) -> None:
         """Process a given reference str."""
         if ref not in self._cache:
             # If there are empty frames add to cache
@@ -24,7 +24,6 @@ class Lru:
                 self._cache[self._replace_next] = ref
             # if in this condition it is a fault so increment
             self.fault_count += 1
-        
 
         # update the last seen
         last_seen = self._last_seen_dict.setdefault(ref, self._internal_clock)
@@ -34,7 +33,7 @@ class Lru:
         self._set_replace_next()
         self._internal_clock += 1
 
-    def process_all(self, ref_tup: tuple[str]) -> None:
+    def process_all(self, ref_tup: tuple[int]) -> None:
         """Process a list of reference strings."""
         for ref in ref_tup:
             self.process_next(ref)

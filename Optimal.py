@@ -3,19 +3,18 @@ import sys
 
 
 class Optimal:
-	def __init__(self, frame_count: int=3):
+	def __init__(self, frame_count: int = 3):
 		"""Init the Optimal class. For this algorithm to work knowledge
-		of all the reference strings before hand is required."""
+		of all the reference strings beforehand is required."""
 		self.frame_count = frame_count
 		self.fault_count = 0
 		self._cache = []
 		self._locs = {}
 		self._replace_next = None
 
-	def process_all(self, ref_tup: tuple[str]) -> None:
+	def process_all(self, ref_tup: tuple[int]) -> None:
 		"""Process a list of reference strings."""
 		self._store_ref_locs(ref_tup)
-
 		for i, ref in enumerate(ref_tup):
 			# remove any entries for locations that are before this one
 			self._remove_all_prev_entries(ref, i)
@@ -24,7 +23,8 @@ class Optimal:
 				# If there are empty frames add to cache
 				if len(self._cache) < self.frame_count:
 					self._cache.append(ref)
-					self._locs[ref].popleft()
+					if len(self._locs[ref]) > 0:
+						self._locs[ref].popleft()
 				else:
 					# No more empty frames. The cache is now full.
 					# Establish which index to replace first
@@ -58,13 +58,13 @@ class Optimal:
 		If the reference string queue is empty it is never seen again so set it to max int."""
 		return self._locs[self._cache[index]][0] if len(self._locs[self._cache[index]]) != 0 else sys.maxsize * 2 + 1
 	
-	def _remove_all_prev_entries(self, curr_ref: str, curr_index: int) -> None:
+	def _remove_all_prev_entries(self, curr_ref: int, curr_index: int) -> None:
 		"""Remove the locations from the given reference string that are before or on the
 		current index location being processed."""
 		while len(self._locs[curr_ref]) > 0 and self._locs[curr_ref][0] <= curr_index:
 			self._locs[curr_ref].popleft()
 
-	def _store_ref_locs(self, ref_tup: tuple[str]) -> None:
+	def _store_ref_locs(self, ref_tup: tuple[int]) -> None:
 		"""Iterate over a tuple of string references and build a dictionary with
 		the ref as a key and the value a queue of the ref's indices as they are seen."""
 		for i, ref in enumerate(ref_tup):
