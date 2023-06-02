@@ -8,13 +8,16 @@ class Optimal:
 		of all the reference strings beforehand is required."""
 		self.frame_count = frame_count
 		self.fault_count = 0
+		self.hit_count = 0
 		self._cache = []
 		self._locs = {}
 		self._replace_next = None
 
-	def process_all(self, ref_tup: tuple[int]) -> None:
+	def process_all(self, ref_tup: list[int]) -> None:
 		"""Process a list of reference strings."""
+		# load indices into memory
 		self._store_ref_locs(ref_tup)
+
 		for i, ref in enumerate(ref_tup):
 			# remove any entries for locations that are before this one
 			self._remove_all_prev_entries(ref, i)
@@ -34,6 +37,8 @@ class Optimal:
 					self._cache[self._replace_next] = ref
 				# if in this condition it is a fault so increment
 				self.fault_count += 1
+			else:
+				self.hit_count += 1
 			
 			# No matter if it is skipped or replaced need to update the next index to replace
 			# but only once frames are full
@@ -64,9 +69,17 @@ class Optimal:
 		while len(self._locs[curr_ref]) > 0 and self._locs[curr_ref][0] <= curr_index:
 			self._locs[curr_ref].popleft()
 
-	def _store_ref_locs(self, ref_tup: tuple[int]) -> None:
-		"""Iterate over a tuple of string references and build a dictionary with
+	def _store_ref_locs(self, ref_tup: list[int]) -> None:
+		"""Iterate over a list of string references and build a dictionary with
 		the ref as a key and the value a queue of the ref's indices as they are seen."""
 		for i, ref in enumerate(ref_tup):
 			ref_loc = self._locs.setdefault(ref, deque())
 			ref_loc.append(i)
+
+	def clear(self):
+		"""Clear results to re-suse the object."""
+		self.fault_count = 0
+		self.hit_count = 0
+		self._cache.clear()
+		self._locs.clear()
+		self._replace_next = None

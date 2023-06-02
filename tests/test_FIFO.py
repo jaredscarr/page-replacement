@@ -1,15 +1,16 @@
 import pytest
 import sys
 from pathlib import Path
+
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from FIFO import Fifo
 
 
 class TestFifo:
-    pages1 = (7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1)
-    pages2 = (8,1,0,7,3,0,3,4,5,3,5,2,0,6,8,4,8,1,5,3)
-    pages3 = (4,6,4,8,6,3,6,0,5,9,2,1,0,4,6,3,0,6,8,4)
+    pages1 = [7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1]
+    pages2 = [8, 1, 0, 7, 3, 0, 3, 4, 5, 3, 5, 2, 0, 6, 8, 4, 8, 1, 5, 3]
+    pages3 = [4, 6, 4, 8, 6, 3, 6, 0, 5, 9, 2, 1, 0, 4, 6, 3, 0, 6, 8, 4]
 
     @pytest.fixture
     def fifo(self):
@@ -35,26 +36,41 @@ class TestFifo:
 
     def test_fault_count_pages1(self, fifo):
         # With frame count set to 3 then expected fault count is 15
-        expected = 15
+        expected_fault_count = 15
+        expected_hit_count = 5
         for i in self.pages1:
             fifo.process_next(i)
-        assert fifo.fault_count == expected
+        assert fifo.fault_count == expected_fault_count
+        assert fifo.hit_count == expected_hit_count
 
     def test_fault_count_pages2(self, fifo):
         # With frame count set to 3 then expected fault count is 15
-        expected = 15
+        expected_fault_count = 15
+        expected_hit_count = 5
         for i in self.pages2:
             fifo.process_next(i)
-        assert fifo.fault_count == expected
+        assert fifo.fault_count == expected_fault_count
+        assert fifo.hit_count == expected_hit_count
 
     def test_fault_count_pages3(self, fifo):
         # With frame count set to 3 then expected fault count is 16
-        expected = 16
+        expected_fault_count = 16
+        expected_hit_count = 4
         for i in self.pages3:
             fifo.process_next(i)
-        assert fifo.fault_count == expected
+        assert fifo.fault_count == expected_fault_count
+        assert fifo.hit_count == expected_hit_count
 
     def test_process_all(self, fifo):
-        expected = 16
+        expected_fault_count = 16
+        expected_hit_count = 4
         fifo.process_all(self.pages3)
-        assert fifo.fault_count == expected
+        assert fifo.fault_count == expected_fault_count
+        assert fifo.hit_count == expected_hit_count
+
+    def test_clear(self, fifo):
+        fifo.process_all(self.pages3)
+        fifo.clear()
+        assert fifo.fault_count == 0
+        assert fifo.hit_count == 0
+        assert len(fifo._cache) == 0
