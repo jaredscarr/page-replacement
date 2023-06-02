@@ -10,10 +10,11 @@ from LRU import Lru
 from FIFO import Fifo
 from Optimal import Optimal
 
-TEST_COUNT = 100
+TEST_COUNT = 1000
 MIN_PAGE_LENGTH = 10
 MAX_PAGE_LENGTH = 100
 MAX_RANGE = 20
+FRAMES = 3
 
 
 if __name__ == '__main__':
@@ -38,7 +39,7 @@ if __name__ == '__main__':
     for test_num in range(TEST_COUNT):
         new_list = []
         # page length between MIN_PAGE_LENGTH and MAX_PAGE_LENGTH
-        for index in range(randrange(10, 101)):
+        for index in range(randrange(MIN_PAGE_LENGTH, MAX_PAGE_LENGTH + 1)):
             # generate from a range of possible ints set in MAX_RANGE
             new_list.append(randrange(MAX_RANGE))
         page_list.append(new_list)
@@ -46,6 +47,10 @@ if __name__ == '__main__':
     fifo = Fifo()
     optimal = Optimal()
     lru = Lru()
+    # set frames
+    fifo.frame_count = FRAMES
+    optimal.frame_count = FRAMES
+    lru.frame_count = FRAMES
     # run tests number of TEST_COUNT times
     for pages in page_list:
         # run algorithm and append results to lists
@@ -82,7 +87,7 @@ if __name__ == '__main__':
     opt_avg_fault_rate = mean(opt_fault_rate_list)
     lru_avg_fault_rate = mean(lru_fault_rate_list)
     # create table
-    table = Table(title=f'Paging Results for {TEST_COUNT} tests.')
+    table = Table(title=f'Paging Results for {TEST_COUNT} tests and {FRAMES} frames.')
     # add columns
     table.add_column('Algorithm', justify='center', style='cyan', no_wrap=True)
     table.add_column('Avg. Fault Count', justify='center', style='magenta', no_wrap=True)
@@ -93,5 +98,5 @@ if __name__ == '__main__':
     table.add_row('Optimal', f'{opt_avg_fault_count}', f'{opt_avg_hit_rate}', f'{fifo_avg_fault_rate}')
     table.add_row('LRU', f'{lru_avg_fault_count}', f'{lru_avg_hit_rate}', f'{lru_avg_fault_rate}')
     # print table
-    console = Console()
-    console.print(table)
+    console = Console(record=True)
+    console.print(table, justify='center')
