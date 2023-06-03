@@ -13,12 +13,12 @@ class Optimal:
 		self._locs = {}
 		self._replace_next = None
 
-	def process_all(self, ref_tup: list[int]) -> None:
+	def process_all(self, ref_list: list[int]) -> None:
 		"""Process a list of reference strings."""
 		# load indices into memory
-		self._store_ref_locs(ref_tup)
+		self._store_ref_locs(ref_list)
 
-		for i, ref in enumerate(ref_tup):
+		for i, ref in enumerate(ref_list):
 			# remove any entries for locations that are before this one
 			self._remove_all_prev_entries(ref, i)
 			

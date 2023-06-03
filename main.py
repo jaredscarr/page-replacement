@@ -41,9 +41,6 @@ CONFIG[3][len(PAGES1)].append(PAGES1)
 CONFIG[3][len(PAGES2)].append(PAGES2)
 CONFIG[3][len(PAGES3)].append(PAGES3)
 
-"""Include in your README.md file which configuration performed the best.Speculate on why this might
-be. Discuss the BigO runtime for each of these configurations and take that into consideration."""
-
 if __name__ == '__main__':
     run_results = []
     # create objects
