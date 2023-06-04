@@ -55,3 +55,21 @@ class TestLRU:
         lru.process_all(self.pages3)
         assert lru.fault_count == expected_fault_count
         assert lru.hit_count == expected_hit_count
+
+    def test_fault_count_os2(self, lru):
+        expected_fault_count = 10
+        expected_hit_count = 4
+        lru.frame_count = 4
+        lru.process_all([1, 2, 3, 4, 1, 5, 6, 2, 1, 2, 3, 7, 6, 3])
+        assert lru.fault_count == expected_fault_count
+        assert lru.hit_count == expected_hit_count
+
+    def test_clear(self, lru):
+        lru.process_all(self.pages3)
+        lru.clear()
+        assert lru._internal_clock == 0
+        assert lru.fault_count == 0
+        assert lru.hit_count == 0
+        assert lru._cache == []
+        assert lru._replace_next is None
+        assert lru._last_seen_dict == {}

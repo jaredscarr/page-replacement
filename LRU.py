@@ -28,23 +28,22 @@ class Lru:
         else:
             self.hit_count += 1
 
-        # update the last seen
-        last_seen = self._last_seen_dict.setdefault(ref, self._internal_clock)
-        last_seen = self._internal_clock
-        self._last_seen_dict[ref] = last_seen
+        # update this ref last seen with the current clock time
+        self._last_seen_dict[ref] = self._internal_clock
         # Set the least recently seen of the items in the cache
         self._set_replace_next()
+        # increment the clock
         self._internal_clock += 1
 
-    def process_all(self, ref_tup: list[int]) -> None:
+    def process_all(self, ref_str: list[int]) -> None:
         """Process a list of reference strings."""
-        for ref in ref_tup:
+        for ref in ref_str:
             self.process_next(ref)
     
     def _set_replace_next(self) -> None:
         """Replace the current next to replace with the new least recently used ref index in the cache."""
         least_rec_val = sys.maxsize * 2 + 1
-        least_rec_cache_index = -1
+        least_rec_cache_index = sys.maxsize * 2 + 1
         for i, ref in enumerate(self._cache):
             if self._last_seen_dict[ref] < least_rec_val:
                 least_rec_cache_index = i
