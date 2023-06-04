@@ -47,14 +47,18 @@ class Optimal:
 	
 	def _set_replace_next(self) -> None:
 		"""Replace the current next item to replace with a new one if the
-		current to replace value is seen earlier. Pre-req: indices are in range."""
+		current to replace value is seen earlier. Pre-req: indices are in range.
+		Note the algorithm works differently than what we did in class in that
+		it doesn't look at FIFO to deal with a ref that is never seen again
+		but instead replaces the first one found with no more location indices.
+		The result is a different cache makeup, but the same fault count result."""
 		current = self._get_next_seen(0)
 		curr_index = 0
 
 		for i in range(1, self.frame_count):
-			next = self._get_next_seen(i)
-			if next > current:
-				current = next
+			next_seen = self._get_next_seen(i)
+			if next_seen > current:
+				current = next_seen
 				curr_index = i
 		self._replace_next = curr_index
 

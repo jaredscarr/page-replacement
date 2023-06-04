@@ -43,6 +43,21 @@ class TestOptimal:
         assert optimal.fault_count == expected_fault_count
         assert optimal.hit_count == expected_hit_count
 
+    def test_fault_count_os2(self, optimal):
+        expected_fault_count = 7
+        expected_hit_count = 7
+        optimal.frame_count = 4
+        optimal.process_all([1, 2, 3, 4, 1, 5, 6, 2, 1, 2, 3, 7, 6, 3])
+        assert optimal.fault_count == expected_fault_count
+        assert optimal.hit_count == expected_hit_count
+
+    def test_fault_count_in_class(self, optimal):
+        expected_fault_count = 8
+        expected_hit_count = 3
+        optimal.process_all([6, 6, 5, 2, 8, 5, 9, 3, 7, 9, 1])
+        assert optimal.fault_count == expected_fault_count
+        assert optimal.hit_count == expected_hit_count
+
     def test_clear(self, optimal):
         optimal.process_all(self.pages3)
         optimal.clear()
