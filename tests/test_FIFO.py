@@ -68,6 +68,14 @@ class TestFifo:
         assert fifo.fault_count == expected_fault_count
         assert fifo.hit_count == expected_hit_count
 
+    def test_fault_count_os2(self, fifo):
+        expected_fault_count = 11
+        expected_hit_count = 3
+        fifo.frame_count = 4
+        fifo.process_all([1, 2, 3, 4, 1, 5, 6, 2, 1, 2, 3, 7, 6, 3])
+        assert fifo.fault_count == expected_fault_count
+        assert fifo.hit_count == expected_hit_count
+
     def test_clear(self, fifo):
         fifo.process_all(self.pages3)
         fifo.clear()
