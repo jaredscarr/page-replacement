@@ -50,6 +50,7 @@ if __name__ == '__main__':
     key = 1
     for frame, page_lengths in CONFIG.items():
         for page, ref_strings in page_lengths.items():
+            print(f'Config: {page}:{frame}')
             # faults
             fifo_fault_list = []
             opt_fault_list = []
@@ -70,16 +71,19 @@ if __name__ == '__main__':
             for ref_str in ref_strings:
                 # fifo
                 fifo.process_all(ref_str)
+                print(f'    FIFO fault count: {fifo.fault_count}')
                 fifo_fault_list.append(fifo.fault_count)
                 fifo_hit_rate_list.append(fifo.hit_count/len(ref_str))
                 fifo_fault_rate_list.append(fifo.fault_count/len(ref_str))
                 # optimal
                 optimal.process_all(ref_str)
+                print(f'    OPT fault count: {optimal.fault_count}')
                 opt_fault_list.append(optimal.fault_count)
                 opt_hit_rate_list.append(optimal.hit_count/len(ref_str))
                 opt_fault_rate_list.append(optimal.fault_count/len(ref_str))
                 # lru
                 lru.process_all(ref_str)
+                print(f'    LRU fault count: {lru.fault_count}')
                 lru_fault_list.append(lru.fault_count)
                 lru_hit_rate_list.append(lru.hit_count/len(ref_str))
                 lru_fault_rate_list.append(lru.fault_count/len(ref_str))
@@ -101,7 +105,7 @@ if __name__ == '__main__':
                 'opt_avg_fault_rate': mean(opt_fault_rate_list),
                 'lru_avg_fault_rate': mean(lru_fault_rate_list),
             })
-
+    print('----------------------------------------------------------------------------')
     for result in run_results:
         # create table
         table = Table(
