@@ -48,9 +48,17 @@ if __name__ == '__main__':
     optimal = Optimal()
     lru = Lru()
     key = 1
+    # fault count table
+    fault_table = Table(title=f'Fault counts')
+    # add columns
+    fault_table.add_column('Algorithm', justify='center', style='cyan', no_wrap=True)
+    fault_table.add_column('Frame No.', justify='center', style='magenta', no_wrap=True)
+    fault_table.add_column('Ref String Length', justify='center', style='cyan', no_wrap=True)
+    fault_table.add_column('Fault Count', justify='center', style='magenta', no_wrap=True)
+    fault_table.add_column('Ref String', justify='center', style='cyan', no_wrap=True)
+
     for frame, page_lengths in CONFIG.items():
         for page, ref_strings in page_lengths.items():
-            print(f'Config: {page}:{frame}')
             # faults
             fifo_fault_list = []
             opt_fault_list = []
@@ -69,21 +77,23 @@ if __name__ == '__main__':
             lru.frame_count = frame
             # add results to lists for later calculation
             for ref_str in ref_strings:
+                str_list = [str(x) for x in ref_str]
+                ref_length = str(len(str_list))
                 # fifo
                 fifo.process_all(ref_str)
-                print(f'    FIFO fault count: {fifo.fault_count}')
+                fault_table.add_row('FIFO', f'{fifo.frame_count}', ref_length, f'{fifo.fault_count}', ', '.join(str_list))
                 fifo_fault_list.append(fifo.fault_count)
                 fifo_hit_rate_list.append(fifo.hit_count/len(ref_str))
                 fifo_fault_rate_list.append(fifo.fault_count/len(ref_str))
                 # optimal
                 optimal.process_all(ref_str)
-                print(f'    OPT fault count: {optimal.fault_count}')
+                fault_table.add_row('OPT', f'{optimal.frame_count}', ref_length, f'{optimal.fault_count}', ', '.join(str_list))
                 opt_fault_list.append(optimal.fault_count)
                 opt_hit_rate_list.append(optimal.hit_count/len(ref_str))
                 opt_fault_rate_list.append(optimal.fault_count/len(ref_str))
                 # lru
                 lru.process_all(ref_str)
-                print(f'    LRU fault count: {lru.fault_count}')
+                fault_table.add_row('LRU', f'{lru.frame_count}', ref_length, f'{lru.fault_count}', ', '.join(str_list))
                 lru_fault_list.append(lru.fault_count)
                 lru_hit_rate_list.append(lru.hit_count/len(ref_str))
                 lru_fault_rate_list.append(lru.fault_count/len(ref_str))
@@ -105,7 +115,10 @@ if __name__ == '__main__':
                 'opt_avg_fault_rate': mean(opt_fault_rate_list),
                 'lru_avg_fault_rate': mean(lru_fault_rate_list),
             })
-    print('----------------------------------------------------------------------------')
+    console = Console(record=True)
+    # print fault count tables
+    console.print(fault_table, justify='center')
+
     for result in run_results:
         # create table
         table = Table(
@@ -134,5 +147,4 @@ if __name__ == '__main__':
             f'{result["lru_avg_fault_rate"]}'
         )
         # print table
-        console = Console(record=True)
         console.print(table, justify='center')
